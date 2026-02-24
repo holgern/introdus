@@ -25,7 +25,7 @@ let
       fetchgit {
         url = "https://github.com/odoo/odoo-ls.git";
         inherit rev;
-        hash = "sha256-4Lruv4Q0JaInh115BW7Dx9Zg8u0EYiHwitR4NOJ7A90=";
+        hash = "sha256-pUXBv2oy/tymyM0szZFLaDOWmrd0EjFNxRPwP36khM4=";
         fetchSubmodules = true;
       };
 

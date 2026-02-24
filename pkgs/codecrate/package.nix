@@ -5,6 +5,9 @@
 }:
 let
   py = python3Packages;
+  localPathspec = import ../pathspec/package.nix {
+    inherit lib python3Packages;
+  };
 in
 py.buildPythonPackage rec {
   pname = "codecrate";
@@ -23,8 +26,8 @@ py.buildPythonPackage rec {
     setuptools-scm
   ];
 
-  dependencies = with py; [
-    pathspec
+  dependencies = [
+    localPathspec
   ];
 
   # optional but nice
