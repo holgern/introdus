@@ -11,13 +11,13 @@ let
 in
 py.buildPythonPackage rec {
   pname = "codecrate";
-  version = "0.3.3";
+  version = "0.3.4";
 
   pyproject = true;
 
   src = py.fetchPypi {
     inherit pname version;
-    hash = "sha256-tPYfgx1NT4bHxxPN29pdHWJMWvvKRBK2kgCNPJwXY38=";
+    hash = "sha256-NLNHrcbPXQPUeJTUj9v8OaB1++UBis1Fm0w8bRRbPqk=";
   };
 
   build-system = with py; [
