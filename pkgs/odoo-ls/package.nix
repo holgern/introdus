@@ -10,7 +10,7 @@
   coreutils,
 
   # allow callers (overlay/flake inputs) to inject locked sources
-  src ? null,
+  odooLsSrc ? null,
   configSchema ? null,
 }:
 
@@ -19,8 +19,8 @@ let
   rev = "a5e855b2da27485f55082e8ecd023171e81ed7bd";
 
   src' =
-    if src != null then
-      src
+    if odooLsSrc != null then
+      odooLsSrc
     else
       fetchgit {
         url = "https://github.com/odoo/odoo-ls.git";
