@@ -8,35 +8,23 @@
   pkg-config,
   openssl,
   coreutils,
-
-  # allow callers (overlay/flake inputs) to inject locked sources
-  odooLsSrc ? null,
-  configSchema ? null,
 }:
 
 let
   version = "1.2.0";
   rev = "a5e855b2da27485f55082e8ecd023171e81ed7bd";
 
-  src' =
-    if odooLsSrc != null then
-      odooLsSrc
-    else
-      fetchgit {
-        url = "https://github.com/odoo/odoo-ls.git";
-        inherit rev;
-        hash = "sha256-pUXBv2oy/tymyM0szZFLaDOWmrd0EjFNxRPwP36khM4=";
-        fetchSubmodules = true;
-      };
+  src' = fetchgit {
+    url = "https://github.com/odoo/odoo-ls.git";
+    inherit rev;
+    hash = "sha256-pUXBv2oy/tymyM0szZFLaDOWmrd0EjFNxRPwP36khM4=";
+    fetchSubmodules = true;
+  };
 
-  configSchema' =
-    if configSchema != null then
-      configSchema
-    else
-      fetchurl {
-        url = "https://github.com/odoo/odoo-ls/releases/download/${version}/config_schema.json";
-        hash = "sha256-F6kfyhhrDYNAOXAJ/BgGF8HeisqxpssatZrlwHOlYig=";
-      };
+  configSchema' = fetchurl {
+    url = "https://github.com/odoo/odoo-ls/releases/download/${version}/config_schema.json";
+    hash = "sha256-F6kfyhhrDYNAOXAJ/BgGF8HeisqxpssatZrlwHOlYig=";
+  };
 in
 rustPlatform.buildRustPackage rec {
   pname = "odoo-ls";
@@ -159,23 +147,31 @@ rustPlatform.buildRustPackage rec {
     fi
 
     if [ "$need_copy" -eq 1 ]; then
+      chmod -R u+w "$runtime" 2>/dev/null || true
       rm -rf "$runtime"
       mkdir -p "$runtime"
       cp -f "$real" "$runtime/odoo_ls_server"
       chmod +x "$runtime/odoo_ls_server"
       cp -a "$assets/typeshed" "$runtime/typeshed"
+      chmod -R u+w "$runtime/typeshed" 2>/dev/null || true
       [ -f "$assets/config_schema.json" ] && cp -f "$assets/config_schema.json" "$runtime/config_schema.json"
       printf '%s\n' "$real" > "$runtime/.real"
     fi
 
     has_stdlib=0
+    has_logs_directory=0
     for a in "$@"; do
       case "$a" in
         --stdlib|--stdlib=*) has_stdlib=1 ;;
+        --logs-directory|--logs-directory=*) has_logs_directory=1 ;;
       esac
     done
     if [ "$has_stdlib" -eq 0 ]; then
       set -- --stdlib "$runtime/typeshed/stdlib" "$@"
+    fi
+    if [ "$has_logs_directory" -eq 0 ]; then
+      mkdir -p "$runtime/logs"
+      set -- --logs-directory "$runtime/logs" "$@"
     fi
 
     exec "$runtime/odoo_ls_server" "$@"
