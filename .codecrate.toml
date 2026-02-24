@@ -1,0 +1,11 @@
+[codecrate]
+output = "context_introdus.md"
+keep_docstrings = true
+dedupe = true
+metadata = false
+manifest = false
+respect_gitignore = true
+exclude = ["examples", "*/.venv/*"]
+include = ["**/*.nix", "**/*.toml", "**/*.rst", "**/*.md", "**/*.lua", "**/*.nu", "**/*.zsh", "**/*.sh"]
+split_max_chars = 0
+layout = "full"

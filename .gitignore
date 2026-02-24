@@ -10,3 +10,5 @@ result-*
 
 # Backup files for temporary changes
 *.bk
+
+context_introdus.md
