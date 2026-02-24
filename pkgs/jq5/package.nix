@@ -28,4 +28,3 @@ writeShellScriptBin "jq5" ''
     jq -Rs -L "${introdus.json5-jq}/share/" "''${JQ_OPTS[@]}" "include \"json5\"; fromjson5 | $QUERY" "$FILE"
   fi
 ''
-

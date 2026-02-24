@@ -11,4 +11,3 @@ rec {
   hours = n: secondsPerHour * n;
   days = n: secondsPerDay * n;
 }
-

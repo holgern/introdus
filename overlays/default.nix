@@ -20,4 +20,3 @@ in
     # nixfmt hack
     |> prev.lib.mergeAttrsList;
 }
-

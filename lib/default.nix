@@ -37,4 +37,3 @@ rec {
     ) (scanPaths path);
 
 }
-
