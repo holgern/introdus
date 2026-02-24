@@ -20,7 +20,7 @@ rec {
   scanPaths =
     path:
     lib.map (f: (path + "/${f}")) (
-      builtins.readDir path
+      (lib.getAttr "readDir" builtins) path
       |> lib.attrsets.filterAttrs (
         file: _type:
         (_type == "directory" && lib.pathExists (path + "/${file}/default.nix"))
@@ -32,8 +32,8 @@ rec {
   leaf = str: lib.last (lib.splitString "/" str);
   scanPathsFilterPlatform =
     path:
-    lib.filter (
-      path: lib.match "nixos.nix|darwin.nix|nixos|darwin" (leaf (builtins.toString path)) == null
-    ) (scanPaths path);
+    lib.filter (path: lib.match "nixos.nix|darwin.nix|nixos|darwin" (leaf (toString path)) == null) (
+      scanPaths path
+    );
 
 }

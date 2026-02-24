@@ -24,4 +24,3 @@ stdenv.mkDerivation {
     cp -r . $out/share/introdus-helpers/
   '';
 }
-

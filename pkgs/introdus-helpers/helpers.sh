@@ -201,4 +201,3 @@ function sops_setup_user_age_key() {
         green "Age key already exists for ${target_hostname}"
     fi
 }
-

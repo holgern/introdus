@@ -37,4 +37,3 @@ pkgs.writeShellApplication {
       fi
     '';
 }
-

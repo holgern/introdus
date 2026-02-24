@@ -2,5 +2,11 @@
 result
 result-*
 
+/.pre-commit-config.yaml
+
 # Ignore automatically generated direnv output
 .direnv
+.ruff_cache
+
+# Backup files for temporary changes
+*.bk
