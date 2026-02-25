@@ -10,7 +10,7 @@ stdenvNoCC.mkDerivation rec {
 
   src = fetchzip {
     url = "https://github.com/equalsraf/win32yank/releases/download/v${version}/win32yank-x64.zip";
-    hash = lib.fakeHash; # first build prints the real hash
+    hash = "sha256-4ivE1cYZhYs4ibx5oiYMOhbse9bdOomk7RjgdVl5lD0=";
     stripRoot = false;
   };
 

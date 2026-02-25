@@ -1,0 +1,72 @@
+name: CI
+on:
+  pull_request:
+  push:
+permissions:
+  contents: read
+jobs:
+  lints:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    env:
+      NIXPKGS_ALLOW_UNFREE: 1
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            extra-experimental-features = nix-command flakes pipe-operators
+            accept-flake-config = true
+      - name: Run nix flake check
+        run: |
+          nix flake check \
+            --impure \
+            --show-trace \
+            --keep-going \
+            --print-build-logs \
+            --max-jobs 1
+      - name: Run bats test derivation
+        run: nix build -L .#checks.x86_64-linux.bats-test
+  package-list:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.list-packages.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            extra-experimental-features = nix-command flakes pipe-operators
+            accept-flake-config = true
+      - id: list-packages
+        name: List flake packages
+        run: echo "packages=$(nix eval --json .#packages.x86_64-linux --apply builtins.attrNames)" >> "$GITHUB_OUTPUT"
+  build-packages:
+    needs:
+      - lints
+      - package-list
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(needs.package-list.outputs.packages) }}
+    runs-on: ubuntu-latest
+    env:
+      NIXPKGS_ALLOW_UNFREE: 1
+    steps:
+      - uses: actions/checkout@v5
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            extra-experimental-features = nix-command flakes pipe-operators
+            accept-flake-config = true
+      - name: Build package ${{ matrix.package }}
+        run: nix build --print-build-logs --show-trace .#${{ matrix.package }}

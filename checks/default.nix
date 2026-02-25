@@ -11,6 +11,13 @@ let
   introdusLib = self.lib.mkIntrodusLib { inherit lib; };
 in
 {
+  # Builds all flake packages for this system. Useful as a fast “does it compile?”
+  # gate in CI and as a local smoke check.
+  all-packages = pkgs.symlinkJoin {
+    name = "all-packages";
+    paths = lib.attrValues self.packages.${system};
+  };
+
   bats-test =
     pkgs.runCommand "bats-test"
       {
